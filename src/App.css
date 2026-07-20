@@ -28,6 +28,12 @@
   color: #61dafb;
 }
 
+.nav-link.active {
+    background-color: #0d6efd;
+    color: white !important;
+    border-radius: 5px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
