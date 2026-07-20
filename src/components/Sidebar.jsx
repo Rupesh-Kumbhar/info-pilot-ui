@@ -1,37 +1,63 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
+function SidebarContent() {
+  const navLinkClass = ({ isActive }) =>
+    isActive
+      ? "nav-link active fw-bold text-primary"
+      : "nav-link";
+
+  return (
+    <>
+      <h5 className="mb-4">Navigation</h5>
+
+      <NavLink className={navLinkClass} to="/">
+        🏠 Dashboard
+      </NavLink>
+
+      <NavLink className={navLinkClass} to="/upload">
+        📁 Upload Documents
+      </NavLink>
+
+      <NavLink className={navLinkClass} to="/chat">
+        🤖 AI Assistant
+      </NavLink>
+    </>
+  );
+}
 
 function Sidebar() {
-    return (
-        <div className="bg-light vh-100 border-end p-3">
-            <h5>Menu</h5>
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <div
+        className="bg-light border-end d-none d-md-block p-3"
+        style={{ minHeight: "100vh" }}
+      >
+        <SidebarContent />
+      </div>
 
-            <ul className="nav flex-column">
-                <li className="nav-item">
-                    <Link className="nav-link" to="/">
-                        Home
-                    </Link>
-                </li>
+      {/* Mobile Sidebar */}
+      <div
+        className="offcanvas offcanvas-start"
+        tabIndex="-1"
+        id="sidebarMenu"
+      >
+        <div className="offcanvas-header">
+          <h5>Menu</h5>
 
-                <li className="nav-item">
-                    <Link className="nav-link" to="/upload">
-                        Upload
-                    </Link>
-                </li>
-
-                <li className="nav-item">
-                    <Link className="nav-link" to="/chat">
-                        Chat
-                    </Link>
-                </li>
-
-                <li className="nav-item">
-                    <Link className="nav-link" to="/documents">
-                        Documents
-                    </Link>
-                </li>
-            </ul>
+          <button
+            type="button"
+            classdddddd dddName="btn-close"
+            data-bs-dismiss="offcanvas"
+          ></button>
         </div>
-    );
+
+        <div className="offcanvas-body">
+          <SidebarContent />
+        </div>
+      </div>
+    </>
+  );
 }
 
 export default Sidebar;

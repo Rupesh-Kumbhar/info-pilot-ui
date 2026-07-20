@@ -1,26 +1,48 @@
 function ChatPage() {
     return (
-        <>
-            <h2>Knowledge Assistant</h2>
+        <div>
 
-            <div className="card mt-3">
+            <h2>
+                AI Assistant
+            </h2>
+
+            <div className="card shadow mt-4">
+
                 <div className="card-body">
 
                     <textarea
-                        className="form-control"
                         rows="4"
-                        placeholder="Ask your question..."
+                        className="form-control"
+                        placeholder="Ask a question from uploaded documents..."
                     />
 
                     <button
                         className="btn btn-success mt-3"
                     >
-                        Ask
+                        Ask AI
                     </button>
 
                 </div>
+
             </div>
-        </>
+
+            <div className="card mt-4">
+
+                <div className="card-body">
+
+                    <h5>
+                        Response
+                    </h5>
+
+                    <p>
+                        AI response will appear here.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
     );
 }
 

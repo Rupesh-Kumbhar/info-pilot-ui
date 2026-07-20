@@ -1,10 +1,21 @@
 function UploadPage() {
     return (
-        <>
-            <h2>Upload Documents</h2>
+        <div>
 
-            <div className="card mt-3">
+            <h2>
+                Upload Documents
+            </h2>
+
+            <div className="card shadow mt-4">
+
                 <div className="card-body">
+
+                    <label
+                        className="form-label"
+                    >
+                        Select PDF
+                    </label>
+
                     <input
                         type="file"
                         className="form-control"
@@ -13,11 +24,14 @@ function UploadPage() {
                     <button
                         className="btn btn-primary mt-3"
                     >
-                        Upload
+                        Upload Document
                     </button>
+
                 </div>
+
             </div>
-        </>
+
+        </div>
     );
 }
 
