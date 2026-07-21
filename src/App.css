@@ -34,6 +34,26 @@
     border-radius: 5px;
 }
 
+.nav-link {
+    margin-bottom: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+    background-color: #e9ecef;
+}
+
+.nav-link.active {
+    background-color: #0d6efd;
+    color: white !important;
+}
+
+.nav-link.active:hover {
+    background-color: #0b5ed7;
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

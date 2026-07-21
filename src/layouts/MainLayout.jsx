@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import Footer from "../components/Footer";
 
 function MainLayout() {
     return (
@@ -22,6 +23,7 @@ function MainLayout() {
 
                 </div>
             </div>
+            <Footer />
         </>
     );
 }
