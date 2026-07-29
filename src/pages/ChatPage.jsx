@@ -1,49 +1,76 @@
+import { useState } from "react";
+import chatService from "../services/chatService";
+
 function ChatPage() {
-    return (
-        <div>
 
-            <h2>
-                AI Assistant
-            </h2>
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
 
-            <div className="card shadow mt-4">
+  const handleAsk = async () => {
+    if (!question.trim()) {
+      return;
+    }
 
-                <div className="card-body">
+    try {
 
-                    <textarea
-                        rows="4"
-                        className="form-control"
-                        placeholder="Ask a question from uploaded documents..."
-                    />
+      setLoading(true);
+      const response = await chatService.askQuestion(question);
+      setAnswer(response.data.answer);
 
-                    <button
-                        className="btn btn-success mt-3"
-                    >
-                        Ask AI
-                    </button>
+    } catch (error) {
 
-                </div>
+    console.error("FULL ERROR", error);
 
-            </div>
-
-            <div className="card mt-4">
-
-                <div className="card-body">
-
-                    <h5>
-                        Response
-                    </h5>
-
-                    <p>
-                        AI response will appear here.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
+    console.log(
+        error.response?.data
     );
+
+    setAnswer(
+        JSON.stringify(
+            error.response?.data || error.message
+        )
+    );
+}   finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h2 className="mb-4">AI Assistant</h2>
+
+      <div className="card shadow">
+        <div className="card-body">
+          <textarea
+            className="form-control"
+            rows="4"
+            placeholder="Ask a question..."
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+          />
+
+          <button
+            className="btn btn-primary mt-3"
+            onClick={handleAsk}
+            disabled={loading}
+          >
+            {loading ? "Thinking..." : "Ask"}
+          </button>
+        </div>
+      </div>
+
+      {answer && (
+        <div className="card shadow mt-4">
+          <div className="card-body">
+            <h5>Answer</h5>
+
+            <p>{answer}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default ChatPage;
