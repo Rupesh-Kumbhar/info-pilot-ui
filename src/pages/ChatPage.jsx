@@ -5,7 +5,15 @@ import "./ChatPage.scss";
 
 function ChatPage() {
   const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState([]);
+
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      content:
+        "Welcome to Info Pilot.\n\nUpload documents and Ask questions about them.",
+    },
+  ]);
+
   const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
@@ -37,25 +45,26 @@ function ChatPage() {
     try {
       const response = await chatService.askQuestion(userQuestion);
 
-      const aiAnswer = response.data.answer;
-
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: aiAnswer,
+          content: response.data.answer,
         },
       ]);
     } catch (error) {
-      console.error("FULL ERROR", error);
+      const errorMessage =
+        error.response?.data?.message || "❌ Failed to get response from AI.";
 
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "❌ Failed to get response from AI.",
+          content: errorMessage,
         },
       ]);
+
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -64,24 +73,39 @@ function ChatPage() {
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-
       handleAsk();
     }
   };
 
+  const clearChat = () => {
+    setMessages([
+      {
+        role: "assistant",
+        content:
+          "👋 Welcome to Info Pilot.\n\nUpload documents and ask questions about them.",
+      },
+    ]);
+  };
+
   return (
     <div>
-      <h2 className="mb-4">Enterprise AI Assistant</h2>
+      <div className="mb-4">
+        <h2>🤖 Info Pilot</h2>
 
-      <div className="card shadow">
+        <p className="text-muted mb-0">Enterprise Knowledge Assistant</p>
+      </div>
+
+      <div className="card shadow rounded">
         <div
           className="card-body"
           style={{
-            minHeight: "550px",
+            height: "75vh",
             display: "flex",
             flexDirection: "column",
           }}
         >
+          {/* CHAT AREA */}
+
           <div
             style={{
               flex: 1,
@@ -89,14 +113,6 @@ function ChatPage() {
               marginBottom: "20px",
             }}
           >
-            {messages.length === 0 && (
-              <div className="text-center text-muted mt-5">
-                <h5>👋 Welcome to Info Pilot</h5>
-
-                <p>Upload a PDF and Ask questions about it.</p>
-              </div>
-            )}
-
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -107,24 +123,42 @@ function ChatPage() {
                 }
               >
                 <div
-                  className={
+                  className={`chat-bubble ${
                     message.role === "user"
                       ? "bg-primary text-white p-3 rounded shadow"
-                      : "bg-light p-3 rounded shadow border"
-                  }
+                      : "bg-white p-3 rounded shadow "
+                  }`}
                   style={{
                     maxWidth: "75%",
                   }}
                 >
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                  <div className="d-flex align-items-start gap-2">
+                    <div
+                      style={{
+                        fontSize: "20px",
+                      }}
+                    >
+                      {message.role === "user" ? "🧑" : "🤖"}
+                    </div>
+
+                    <div className="chat-message">
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
 
             {loading && (
               <div className="d-flex justify-content-start mb-3">
-                <div className="bg-light p-3 rounded shadow border">
-                  🤖 Thinking...
+                <div className="bg-white p-3 rounded shadow border">
+                  <div className="d-flex align-items-center">
+                    <div
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    />
+                    Thinking...
+                  </div>
                 </div>
               </div>
             )}
@@ -132,11 +166,16 @@ function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* INPUT AREA */}
+
           <div>
             <textarea
-              className="form-control"
+              className="form-control rounded"
               rows="3"
-              placeholder="Ask a question about your uploaded documents..."
+              placeholder={`Examples:
+  • What is the total amount?
+  • What is the application number?
+  • Summarize this document`}
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -147,13 +186,22 @@ function ChatPage() {
                 Press Enter to send • Shift + Enter for new line
               </small>
 
-              <button
-                className="btn btn-primary"
-                onClick={handleAsk}
-                disabled={loading}
-              >
-                {loading ? "Thinking..." : "🚀 Ask AI"}
-              </button>
+              <div className="d-flex gap-2">
+                <button
+                  className="btn btn-outline-secondary"
+                  onClick={clearChat}
+                >
+                  Clear Chat
+                </button>
+
+                <button
+                  className="btn btn-primary"
+                  onClick={handleAsk}
+                  disabled={loading}
+                >
+                  {loading ? "Thinking..." : "🚀 Ask AI"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
