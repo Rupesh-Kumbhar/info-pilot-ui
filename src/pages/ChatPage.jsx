@@ -67,6 +67,8 @@ function ChatPage() {
         {
           role: "assistant",
           content: response.data.answer,
+          source:
+              response.data.sourceDocument
         },
       ]);
 
@@ -163,7 +165,7 @@ function ChatPage() {
               flexDirection: "column",
             }}
           >
-          {/* CHAT AREA */}
+            {/* CHAT AREA */}
 
             <div
               style={{
@@ -202,6 +204,12 @@ function ChatPage() {
 
                       <div className="chat-message">
                         <ReactMarkdown>{message.content}</ReactMarkdown>
+
+                        {message.source && (
+                          <div className="mt-2 small text-muted">
+                            📄 Source: {message.source}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
