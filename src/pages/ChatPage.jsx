@@ -21,6 +21,26 @@ function ChatPage() {
 
   const messagesEndRef = useRef(null);
 
+  const [selectedHistoryId, setSelectedHistoryId] = useState(null);
+
+  const loadConversation = (chat) => {
+
+    setSelectedHistoryId(chat.id);
+
+    setMessages([
+        {
+            role: "user",
+            content: chat.question
+        },
+        {
+            role: "assistant",
+            content: chat.answer,
+            source: chat.sourceDocument,
+            askedAt: chat.askedAt
+        }
+    ]);
+};
+
   useEffect(() => {
     loadHistory();
   }, []);
@@ -132,7 +152,13 @@ function ChatPage() {
             {history.map((chat) => (
               <div
                 key={chat.id}
-                className="border rounded p-2 mb-2 history-item"
+                className={`border rounded p-2 mb-2 history-item ${
+                  selectedHistoryId === chat.id ? "bg-primary text-white" : ""
+                }`}
+                style={{
+                  cursor: "pointer",
+                }}
+                onClick={() => loadConversation(chat)}
               >
                 <div className="fw-semibold">
                   {chat.question?.length > 40
@@ -205,9 +231,11 @@ function ChatPage() {
                       <div className="chat-message">
                         <ReactMarkdown>{message.content}</ReactMarkdown>
 
-                        {message.source && (
-                          <div className="mt-2 small text-muted">
-                            📄 Source: {message.source}
+                        {message.askedAt && (
+                          <div className="mt-1">
+                            <small className="text-muted">
+                              🕒 {message.askedAt}
+                            </small>
                           </div>
                         )}
                       </div>
