@@ -1,9 +1,15 @@
-import { uploadDocument,getDocuments,deleteDocument} from "../api/documentApi";
+import {
+  uploadDocument,
+  getDocuments,
+  getAllDocuments,
+  deleteDocument,
+} from "../api/documentApi";
 
 const documentService = {
-    uploadDocument,
-    getDocuments,
-    deleteDocument
+  uploadDocument,
+  getDocuments,
+  getAllDocuments,
+  deleteDocument,
 };
 
 export default documentService;
