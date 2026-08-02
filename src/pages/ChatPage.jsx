@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import chatService from "../services/chatService";
 import historyService from "../services/historyService";
+import documentService from "../services/documentService";
 import ReactMarkdown from "react-markdown";
 import "./ChatPage.scss";
 
@@ -11,38 +12,21 @@ function ChatPage() {
     {
       role: "assistant",
       content:
-        "Welcome to Info Pilot.\n\nUpload documents and ask questions about them.",
+        "👋 Welcome to Info Pilot.\n\nUpload documents and ask questions about them.",
     },
   ]);
 
   const [history, setHistory] = useState([]);
-
+  const [documents, setDocuments] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState("");
+  const [selectedHistoryId, setSelectedHistoryId] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef(null);
 
-  const [selectedHistoryId, setSelectedHistoryId] = useState(null);
-
-  const loadConversation = (chat) => {
-
-    setSelectedHistoryId(chat.id);
-
-    setMessages([
-        {
-            role: "user",
-            content: chat.question
-        },
-        {
-            role: "assistant",
-            content: chat.answer,
-            source: chat.sourceDocument,
-            askedAt: chat.askedAt
-        }
-    ]);
-};
-
   useEffect(() => {
     loadHistory();
+    loadDocuments();
   }, []);
 
   useEffect(() => {
@@ -50,6 +34,16 @@ function ChatPage() {
       behavior: "smooth",
     });
   }, [messages]);
+
+  const loadDocuments = async () => {
+    try {
+      const response = await documentService.getDocuments();
+
+      setDocuments(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const loadHistory = async () => {
     try {
@@ -61,7 +55,30 @@ function ChatPage() {
     }
   };
 
+  const loadConversation = (chat) => {
+    setSelectedHistoryId(chat.id);
+
+    setMessages([
+      {
+        role: "user",
+        content: chat.question,
+      },
+      {
+        role: "assistant",
+        content: chat.answer,
+        source: chat.sourceDocument,
+        askedAt: chat.askedAt,
+      },
+    ]);
+  };
+
   const handleAsk = async () => {
+    if (!selectedDocument) {
+      alert("Please select a document first.");
+
+      return;
+    }
+
     if (!question.trim() || loading) {
       return;
     }
@@ -80,15 +97,17 @@ function ChatPage() {
     setLoading(true);
 
     try {
-      const response = await chatService.askQuestion(userQuestion);
+      const response = await chatService.askQuestion(
+        userQuestion,
+        selectedDocument,
+      );
 
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
           content: response.data.answer,
-          source:
-              response.data.sourceDocument
+          source: response.data.sourceDocument,
         },
       ]);
 
@@ -119,6 +138,8 @@ function ChatPage() {
   };
 
   const clearChat = () => {
+    setSelectedHistoryId(null);
+
     setMessages([
       {
         role: "assistant",
@@ -166,7 +187,13 @@ function ChatPage() {
                     : chat.question}
                 </div>
 
-                <small className="text-muted">📄 {chat.sourceDocument}</small>
+                <small
+                  className={
+                    selectedHistoryId === chat.id ? "text-white" : "text-muted"
+                  }
+                >
+                  📄 {chat.sourceDocument}
+                </small>
               </div>
             ))}
           </div>
@@ -213,7 +240,7 @@ function ChatPage() {
                     className={`chat-bubble ${
                       message.role === "user"
                         ? "bg-primary text-white p-3 rounded shadow"
-                        : "bg-white p-3 rounded shadow "
+                        : "bg-white p-3 rounded shadow"
                     }`}
                     style={{
                       maxWidth: "75%",
@@ -230,6 +257,14 @@ function ChatPage() {
 
                       <div className="chat-message">
                         <ReactMarkdown>{message.content}</ReactMarkdown>
+
+                        {message.source && (
+                          <div className="mt-2">
+                            <small className="text-muted">
+                              📄 Source: {message.source}
+                            </small>
+                          </div>
+                        )}
 
                         {message.askedAt && (
                           <div className="mt-1">
@@ -264,6 +299,20 @@ function ChatPage() {
             {/* INPUT AREA */}
 
             <div>
+              <select
+                className="form-select mb-3"
+                value={selectedDocument}
+                onChange={(e) => setSelectedDocument(e.target.value)}
+              >
+                <option value="">📄 Select Document</option>
+
+                {documents.map((doc) => (
+                  <option key={doc.id} value={doc.id}>
+                    {doc.fileName}
+                  </option>
+                ))}
+              </select>
+
               <textarea
                 className="form-control rounded"
                 rows="3"
