@@ -8,3 +8,9 @@ export const askQuestion = (question, documentId) => {
     documentId,
   });
 };
+
+export const getQuestionCount = () => {
+    return axios.get(
+        `${BASE_URL}/count`
+    );
+};
