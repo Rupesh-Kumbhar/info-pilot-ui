@@ -45,9 +45,7 @@ function DocumentList({
                                 <button
                                     className="btn btn-danger btn-sm"
                                     onClick={() =>
-                                        onDelete(
-                                            document.id
-                                        )
+                                        onDelete(document)
                                     }
                                 >
                                     Delete
