@@ -4,6 +4,8 @@ import documentService from "../services/documentService";
 
 import DocumentList from "../components/DocumentList/DocumentList";
 
+import chatService from "../services/chatService";
+
 function HomePage() {
   const [documents, setDocuments] = useState([]);
 
@@ -21,8 +23,11 @@ function HomePage() {
     }
   };
 
+  const [questionCount, setQuestionCount] = useState(0);
+
   useEffect(() => {
-    loadDocuments();
+      loadDocuments();
+      loadQuestionCount();
   }, []);
 
   const handleDelete = (document) => {
@@ -42,6 +47,16 @@ function HomePage() {
       setShowDeleteModal(false);
 
       setSelectedDocument(null);
+    }
+  };
+
+  const loadQuestionCount = async () => {
+    try {
+      const response = await chatService.getQuestionCount();
+
+      setQuestionCount(response.data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -65,7 +80,7 @@ function HomePage() {
             <div className="card-body">
               <h5>Total Questions</h5>
 
-              <h2>--</h2>
+              <h2>{questionCount}</h2>
             </div>
           </div>
         </div>
