@@ -1,4 +1,4 @@
-import { askQuestion,getQuestionCount } from "../api/chatApi";
+import { askQuestion,getQuestionCount,getLastQuestion } from "../api/chatApi";
 
 const chatService = {
   askQuestion: (question, documentId) => {
@@ -7,6 +7,9 @@ const chatService = {
   getQuestionCount: () => {
     return getQuestionCount();
   },
+  getLastQuestion: () => {
+    return getLastQuestion();
+  }
 };
 
 export default chatService;

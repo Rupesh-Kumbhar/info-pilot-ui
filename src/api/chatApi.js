@@ -10,7 +10,9 @@ export const askQuestion = (question, documentId) => {
 };
 
 export const getQuestionCount = () => {
-    return axios.get(
-        `${BASE_URL}/count`
-    );
+  return axios.get(`${BASE_URL}/count`);
+};
+
+export const getLastQuestion = () => {
+  return axios.get(`${BASE_URL}/latest-question`);
 };

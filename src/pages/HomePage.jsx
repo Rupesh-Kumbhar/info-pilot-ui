@@ -13,11 +13,28 @@ function HomePage() {
 
   const [selectedDocument, setSelectedDocument] = useState(null);
 
+  const [latestDocument, setLatestDocument] = useState("");
+
+  const [lastQuestion, setLastQuestion] = useState("");
+
   const loadDocuments = async () => {
     try {
       const response = await documentService.getDocuments();
 
       setDocuments(response.data);
+      if (response.data.length > 0) {
+        setLatestDocument(response.data[response.data.length - 1].fileName);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const loadLastQuestion = async () => {
+    try {
+      const response = await chatService.getLastQuestion();
+
+      setLastQuestion(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -28,6 +45,7 @@ function HomePage() {
   useEffect(() => {
       loadDocuments();
       loadQuestionCount();
+      loadLastQuestion();
   }, []);
 
   const handleDelete = (document) => {
@@ -91,6 +109,28 @@ function HomePage() {
               <h5>AI Status</h5>
 
               <h2>✅ Active</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row mt-4">
+        <div className="col-md-6">
+          <div className="card shadow">
+            <div className="card-body">
+              <h5>Latest Uploaded Document</h5>
+
+              <p className="mb-0">{latestDocument || "No documents"}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6">
+          <div className="card shadow">
+            <div className="card-body">
+              <h5>Last Question</h5>
+
+              <p className="mb-0">{lastQuestion}</p>
             </div>
           </div>
         </div>
