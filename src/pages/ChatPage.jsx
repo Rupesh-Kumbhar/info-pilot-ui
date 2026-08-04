@@ -17,6 +17,7 @@ function ChatPage() {
   ]);
 
   const [history, setHistory] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState("");
   const [selectedHistoryId, setSelectedHistoryId] = useState(null);
@@ -166,36 +167,47 @@ function ChatPage() {
               overflowY: "auto",
             }}
           >
+            <input
+              type="text"
+              className="form-control mb-3"
+              placeholder="🔍 Search history..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
             {history.length === 0 && (
               <p className="text-muted">No conversations yet</p>
             )}
 
-            {history.map((chat) => (
-              <div
-                key={chat.id}
-                className={`border rounded p-2 mb-2 history-item ${
-                  selectedHistoryId === chat.id ? "bg-primary text-white" : ""
-                }`}
-                style={{
-                  cursor: "pointer",
-                }}
-                onClick={() => loadConversation(chat)}
-              >
-                <div className="fw-semibold">
-                  {chat.question?.length > 40
-                    ? chat.question.substring(0, 40) + "..."
-                    : chat.question}
-                </div>
-
-                <small
-                  className={
-                    selectedHistoryId === chat.id ? "text-white" : "text-muted"
-                  }
+            {history
+              .filter((chat) =>
+                chat.question?.toLowerCase().includes(searchTerm.toLowerCase()),
+              )
+              .map((chat) => (
+                <div
+                  key={chat.id}
+                  className={`border rounded p-2 mb-2 history-item ${
+                    selectedHistoryId === chat.id ? "bg-primary text-white" : ""
+                  }`}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  onClick={() => loadConversation(chat)}
                 >
-                  📄 {chat.sourceDocument}
-                </small>
-              </div>
-            ))}
+                  <div className="fw-semibold">
+                    {chat.question?.length > 40
+                      ? chat.question.substring(0, 40) + "..."
+                      : chat.question}
+                  </div>
+
+                  <small
+                    className={
+                      selectedHistoryId === chat.id ? "text-white" : "text-muted"
+                    }
+                  >
+                    📄 {chat.sourceDocument}
+                  </small>
+                </div>
+              ))}
           </div>
         </div>
       </div>
